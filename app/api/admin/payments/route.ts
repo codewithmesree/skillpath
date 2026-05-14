@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Payment from '@/models/Payment';
+import User from '@/models/User';
+import Course from '@/models/Course';
 import { getUserFromCookies } from '@/lib/auth';
 
 export async function GET() {
@@ -12,8 +14,8 @@ export async function GET() {
 
     await connectDB();
     const payments = await Payment.find({})
-      .populate('userId', 'name email')
-      .populate('courseId', 'title')
+      .populate({ path: 'userId', model: User, select: 'name email' })
+      .populate({ path: 'courseId', model: Course, select: 'title' })
       .sort({ createdAt: -1 });
 
     return NextResponse.json(payments);

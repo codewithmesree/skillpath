@@ -36,6 +36,10 @@ export default function MyCourses() {
     fetchEnrollments();
   }, []);
 
+  const sortedEnrollments = [...enrollments].sort((a, b) => 
+    new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+  );
+
   if (loading) return <div className="min-h-screen bg-bg-offwhite flex items-center justify-center font-heading font-bold uppercase opacity-20 text-4xl">Loading Your Library...</div>
 
   return (
@@ -53,9 +57,9 @@ export default function MyCourses() {
             </div>
             <Button variant="primary" onClick={() => window.location.href = '/courses'}>Browse More</Button>
           </header>
-
+ 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {enrollments.length > 0 ? enrollments.map((enroll) => (
+            {sortedEnrollments.length > 0 ? sortedEnrollments.map((enroll) => (
               <CourseCard 
                 key={enroll._id}
                 courseId={enroll.courseId?._id}

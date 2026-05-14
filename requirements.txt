@@ -1,0 +1,18 @@
+# SkillPath System & Environment Requirements
+# ------------------------------------------
+# This project uses Node.js for dependency management.
+# Main dependencies are located in package.json.
+
+# Engines
+node>=18.0.0
+npm>=9.0.0
+
+# Database
+mongodb>=6.0.0
+
+# Payment Gateway
+razorpay-sdk>=2.9.0
+
+# Environment
+browser-support: modern-evergreen
+platform: cross-platform (Windows/macOS/Linux)

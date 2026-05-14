@@ -9,6 +9,8 @@ import Script from 'next/script';
 
 export default function CourseDetails() {
   const [course, setCourse] = useState<any>(null);
+  const [user, setUser] = useState<any>(null);
+  const [isEnrolled, setIsEnrolled] = useState(false);
   const [loading, setLoading] = useState(true);
   const [enrolling, setEnrolling] = useState(false);
   const params = useParams();
@@ -17,22 +19,75 @@ export default function CourseDetails() {
   useEffect(() => {
     if (!params || !params.id) return;
     
-    fetch(`/api/courses/${params.id}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data) {
-          setCourse(data);
-          setLoading(false);
+    const fetchData = async () => {
+      try {
+        // Fetch course
+        const courseRes = await fetch(`/api/courses/${params.id}`);
+        const courseData = await courseRes.json();
+        if (courseData) setCourse(courseData);
+
+        // Fetch user & enrollment status
+        const userRes = await fetch('/api/auth/me');
+        const userData = await userRes.json();
+        
+        if (userData.user) {
+          setUser(userData.user);
+          const enrollRes = await fetch(`/api/enrollments/${userData.user.id}`);
+          const enrollments = await enrollRes.json();
+          if (Array.isArray(enrollments)) {
+            const enrolled = enrollments.some((e: any) => 
+              (e.courseId._id || e.courseId) === params.id
+            );
+            setIsEnrolled(enrolled);
+          }
         }
-      })
-      .catch(err => {
-        console.error("Error fetching course:", err);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchData();
   }, [params]);
 
 
   const handleEnroll = async () => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+
+    if (isEnrolled) {
+      router.push(`/dashboard/learn/${course._id}`);
+      return;
+    }
+
+    // Logic for Pro/Enterprise users (Free Enrollment)
+    if (user.plan === 'pro' || user.plan === 'enterprise') {
+      setEnrolling(true);
+      try {
+        const res = await fetch('/api/enrollments/free', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ courseId: course._id }),
+        });
+        
+        if (res.ok) {
+          setIsEnrolled(true);
+          router.push(`/dashboard/learn/${course._id}`);
+        } else {
+          const data = await res.json();
+          throw new Error(data.error || 'Enrollment failed');
+        }
+      } catch (error: any) {
+        alert(error.message);
+      } finally {
+        setEnrolling(false);
+      }
+      return;
+    }
+
     setEnrolling(true);
     try {
       // 1. Create order
@@ -62,16 +117,15 @@ export default function CourseDetails() {
           });
 
           if (verifyRes.ok) {
-            alert('Enrollment successful!');
+            setIsEnrolled(true);
             router.push(`/dashboard/learn/${course._id}`);
           } else {
-
             alert('Payment verification failed.');
           }
         },
         prefill: {
-          name: "User Name",
-          email: "user@example.com",
+          name: user.name,
+          email: user.email,
         },
         theme: {
           color: "#9D7BFF",
@@ -126,7 +180,9 @@ export default function CourseDetails() {
                 onClick={handleEnroll}
                 disabled={enrolling}
               >
-                {enrolling ? 'Enrolling...' : (user?.plan === 'pro' || user?.plan === 'enterprise' ? 'Enroll for Free (Pro)' : `Enroll Now — ₹${course.price}`)}
+                {enrolling ? 'Enrolling...' : 
+                 isEnrolled ? 'Go to Course' :
+                 (user?.plan === 'pro' || user?.plan === 'enterprise' ? 'Enroll for Free (Pro)' : `Enroll Now — ₹${course.price}`)}
               </Button>
                     <Button variant="secondary" className="w-full py-4 text-lg">Add to Wishlist</Button>
                   </div>

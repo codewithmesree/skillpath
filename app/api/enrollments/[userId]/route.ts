@@ -3,10 +3,11 @@ import connectDB from '@/lib/mongodb';
 import Enrollment from '@/models/Enrollment';
 import Course from '@/models/Course';
 
-export async function GET(req: Request, { params }: { params: { userId: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ userId: string }> }) {
   try {
+    const { userId } = await params;
     await connectDB();
-    const enrollments = await Enrollment.find({ userId: params.userId }).populate({
+    const enrollments = await Enrollment.find({ userId }).populate({
         path: 'courseId',
         model: Course
     });

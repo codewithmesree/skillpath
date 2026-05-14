@@ -51,8 +51,14 @@ export const Navbar = () => {
       <div className="hidden lg:flex items-center gap-10 bg-secondary/30 px-8 py-2 border-2 border-deep-indigo/10 rounded-full">
         <Link href="/courses" className="font-heading font-bold text-deep-indigo hover:text-primary transition-all text-xs uppercase tracking-widest">Courses</Link>
         {user && (
-          <Link href={user.role === 'admin' ? '/admin' : '/dashboard'} className="font-heading font-bold text-deep-indigo hover:text-primary transition-all text-xs uppercase tracking-widest">Dashboard</Link>
+          <Link 
+            href={user.role === 'admin' ? '/admin' : user.role === 'instructor' ? '/instructor' : '/dashboard'} 
+            className="font-heading font-bold text-deep-indigo hover:text-primary transition-all text-xs uppercase tracking-widest"
+          >
+            Dashboard
+          </Link>
         )}
+
         <Link href="/pricing" className="font-heading font-bold text-deep-indigo hover:text-primary transition-all text-xs uppercase tracking-widest flex items-center gap-2">
           <Sparkles size={14} />
           Pricing

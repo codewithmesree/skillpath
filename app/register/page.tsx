@@ -33,7 +33,11 @@ export default function RegisterPage() {
 
       if (!res.ok) throw new Error(data.error);
 
-      router.push(data.user.role === 'admin' ? '/admin' : '/dashboard');
+      router.push(
+        data.user.role === 'admin' ? '/admin' : 
+        data.user.role === 'instructor' ? '/instructor' : 
+        '/dashboard'
+      );
       router.refresh();
     } catch (err: any) {
       setError(err.message);
@@ -93,6 +97,13 @@ export default function RegisterPage() {
                 </button>
                 <button 
                   type="button"
+                  onClick={() => setRole('instructor')}
+                  className={`flex-1 py-3 border-2 font-bold rounded-md transition-all ${role === 'instructor' ? 'bg-primary text-white border-deep-indigo shadow-brutal' : 'bg-white text-deep-indigo border-transparent hover:border-deep-indigo'}`}
+                >
+                  Instructor
+                </button>
+                <button 
+                  type="button"
                   onClick={() => setRole('admin')}
                   className={`flex-1 py-3 border-2 font-bold rounded-md transition-all ${role === 'admin' ? 'bg-primary text-white border-deep-indigo shadow-brutal' : 'bg-white text-deep-indigo border-transparent hover:border-deep-indigo'}`}
                 >
@@ -100,6 +111,7 @@ export default function RegisterPage() {
                 </button>
               </div>
             </div>
+
             
             <Button 
               type="submit" 

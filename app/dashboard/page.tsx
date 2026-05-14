@@ -6,11 +6,14 @@ import { Sidebar } from "@/components/Sidebar";
 import { Card } from "@/components/Card";
 import { CourseCard } from "@/components/CourseCard";
 import { Button } from "@/components/Button";
+import { useRouter } from 'next/navigation';
 
 export default function StudentDashboard() {
   const [user, setUser] = useState<any>(null);
   const [enrollments, setEnrollments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -25,7 +28,16 @@ export default function StudentDashboard() {
 
         const data = await res.json();
         if (data.user) {
+          if (data.user.role === 'instructor') {
+            router.push('/instructor');
+            return;
+          }
+          if (data.user.role === 'admin') {
+            router.push('/admin');
+            return;
+          }
           setUser(data.user);
+
           
           const enrollRes = await fetch(`/api/enrollments/${data.user.id}`);
           if (enrollRes.ok) {
@@ -47,11 +59,27 @@ export default function StudentDashboard() {
   }, []);
 
 
+  const sortedEnrollments = [...enrollments].sort((a, b) => 
+    new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+  );
+
+  const calculateQuizAvg = () => {
+    let totalScore = 0;
+    let totalQuizzes = 0;
+    enrollments.forEach(e => {
+      e.quizScores?.forEach((q: any) => {
+        totalScore += (q.score / q.total) * 100;
+        totalQuizzes++;
+      });
+    });
+    return totalQuizzes > 0 ? `${Math.round(totalScore / totalQuizzes)}%` : "0%";
+  };
+
   const stats = [
     { label: "Completed", value: enrollments.filter(e => e.progress === 100).length.toString() },
     { label: "In Progress", value: enrollments.filter(e => e.progress < 100).length.toString() },
-    { label: "Hours Learned", value: "128" },
-    { label: "Quiz Avg", value: "92%" },
+    { label: "Hours Learned", value: enrollments.length > 0 ? (enrollments.length * 2.5).toFixed(1) : "0" }, // Simple estimation
+    { label: "Quiz Avg", value: calculateQuizAvg() },
   ];
 
   if (loading) return <div className="min-h-screen bg-bg-offwhite flex items-center justify-center font-heading font-bold uppercase opacity-20 text-4xl">Loading Dashboard...</div>
@@ -88,7 +116,7 @@ export default function StudentDashboard() {
                </div>
                
                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                 {enrollments.length > 0 ? enrollments.map((enroll) => (
+                 {sortedEnrollments.length > 0 ? sortedEnrollments.map((enroll) => (
                    <CourseCard 
                      key={enroll._id}
                      courseId={enroll.courseId?._id}

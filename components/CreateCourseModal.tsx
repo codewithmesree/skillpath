@@ -7,17 +7,37 @@ interface CreateCourseModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  initialData?: any; // New prop for editing
 }
 
-export const CreateCourseModal = ({ isOpen, onClose, onSuccess }: CreateCourseModalProps) => {
+export const CreateCourseModal = ({ isOpen, onClose, onSuccess, initialData }: CreateCourseModalProps) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     price: '',
-    thumbnail: '',
     category: '',
     instructor: '',
   });
+
+  React.useEffect(() => {
+    if (initialData) {
+      setFormData({
+        title: initialData.title || '',
+        description: initialData.description || '',
+        price: initialData.price?.toString() || '',
+        category: initialData.category || '',
+        instructor: initialData.instructor || '',
+      });
+    } else {
+      setFormData({
+        title: '',
+        description: '',
+        price: '',
+        category: '',
+        instructor: '',
+      });
+    }
+  }, [initialData, isOpen]);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -25,8 +45,11 @@ export const CreateCourseModal = ({ isOpen, onClose, onSuccess }: CreateCourseMo
     setLoading(true);
 
     try {
-      const res = await fetch('/api/courses', {
-        method: 'POST',
+      const url = initialData ? `/api/courses/${initialData._id}` : '/api/courses';
+      const method = initialData ? 'PATCH' : 'POST';
+
+      const res = await fetch(url, {
+        method: method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
@@ -41,7 +64,6 @@ export const CreateCourseModal = ({ isOpen, onClose, onSuccess }: CreateCourseMo
           title: '',
           description: '',
           price: '',
-          thumbnail: '',
           category: '',
           instructor: '',
         });
@@ -87,7 +109,7 @@ export const CreateCourseModal = ({ isOpen, onClose, onSuccess }: CreateCourseMo
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input 
             label="Price (INR)"
             type="number"
@@ -101,13 +123,6 @@ export const CreateCourseModal = ({ isOpen, onClose, onSuccess }: CreateCourseMo
             placeholder="e.g. Jane Doe"
             value={formData.instructor}
             onChange={(e) => setFormData({...formData, instructor: e.target.value})}
-            required
-          />
-          <Input 
-            label="Thumbnail URL"
-            placeholder="https://..."
-            value={formData.thumbnail}
-            onChange={(e) => setFormData({...formData, thumbnail: e.target.value})}
             required
           />
         </div>

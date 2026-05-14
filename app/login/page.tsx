@@ -31,8 +31,13 @@ export default function LoginPage() {
 
       if (!res.ok) throw new Error(data.error);
 
-      router.push(data.user.role === 'admin' ? '/admin' : '/dashboard');
+      router.push(
+        data.user.role === 'admin' ? '/admin' : 
+        data.user.role === 'instructor' ? '/instructor' : 
+        '/dashboard'
+      );
       router.refresh();
+
     } catch (err: any) {
       setError(err.message);
     } finally {

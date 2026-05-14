@@ -22,6 +22,10 @@ const CourseSchema = new mongoose.Schema({
   quizzes: [QuizSchema],
   rating: { type: Number, default: 4.5 },
   enrollmentsCount: { type: Number, default: 0 },
+  status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+  instructorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  thumbnail: { type: String },
 }, { timestamps: true });
 
 export default mongoose.models.Course || mongoose.model('Course', CourseSchema);
+

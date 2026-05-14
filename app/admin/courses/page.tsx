@@ -5,22 +5,21 @@ import { Navbar } from "@/components/Navbar";
 import { AdminSidebar } from "@/components/AdminSidebar";
 import { Card } from "@/components/Card";
 import { Button } from "@/components/Button";
-import { CreateCourseModal } from "@/components/CreateCourseModal";
 import { Search, Filter, MoreVertical, Edit2, Trash2 } from 'lucide-react';
 
 export default function AdminCourses() {
   const [courses, setCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
   const fetchCourses = async () => {
     try {
       const res = await fetch('/api/courses');
       const data = await res.json();
-      setCourses(data);
+      setCourses(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching courses:", error);
+      setCourses([]);
     } finally {
       setLoading(false);
     }
@@ -30,10 +29,10 @@ export default function AdminCourses() {
     fetchCourses();
   }, []);
 
-  const filteredCourses = courses.filter(course => 
-    course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    course.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredCourses = Array.isArray(courses) ? courses.filter(course => 
+    course.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    course.category?.toLowerCase().includes(searchTerm.toLowerCase())
+  ) : [];
 
   if (loading) return <div className="min-h-screen bg-bg-offwhite flex items-center justify-center font-heading font-bold uppercase opacity-20 text-4xl">Loading Courses...</div>
 
@@ -48,9 +47,8 @@ export default function AdminCourses() {
           <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <h1 className="text-4xl font-heading font-bold text-deep-indigo uppercase">Course Inventory</h1>
-              <p className="text-lg opacity-70">Create, edit, and manage your learning content.</p>
+              <p className="text-lg opacity-70">Review and manage platform courses.</p>
             </div>
-            <Button variant="primary" onClick={() => setIsModalOpen(true)}>+ New Course</Button>
           </header>
 
           {/* Controls */}
@@ -116,11 +114,6 @@ export default function AdminCourses() {
         </main>
       </div>
 
-      <CreateCourseModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        onSuccess={fetchCourses}
-      />
     </div>
   );
 }
