@@ -20,9 +20,12 @@ export default function CourseDetails() {
     if (!params || !params.id) return;
     
     const fetchData = async () => {
+      const id = Array.isArray(params.id) ? params.id[0] : params.id;
+      if (!id) return;
+
       try {
         // Fetch course
-        const courseRes = await fetch(`/api/courses/${params.id}`);
+        const courseRes = await fetch(`/api/courses/${id}`);
         const courseData = await courseRes.json();
         if (courseData) setCourse(courseData);
 
