@@ -63,18 +63,21 @@ export default function Home() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <CourseCard 
+                courseId="featured-1"
                 title="Mastering Brutalist Design" 
                 category="Design" 
                 instructor="Gary Bold" 
                 rating={4.9} 
               />
               <CourseCard 
+                courseId="featured-2"
                 title="Advanced SaaS Architecture" 
                 category="Development" 
                 instructor="Sarah Script" 
                 rating={4.8} 
               />
               <CourseCard 
+                courseId="featured-3"
                 title="Modern Marketing Secrets" 
                 category="Business" 
                 instructor="Mark Growth" 
