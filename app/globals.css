@@ -1,26 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Hanken+Grotesk:wght@100..900&display=swap');
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #9D7BFF;
+  --color-secondary: #E6E1FF;
+  --color-bg-offwhite: #FCF9F8;
+  --color-deep-indigo: #2D1B69;
+  --color-dark-text: #1C1B1B;
+  
+  --color-surface-lowest: #FFFFFF;
+  --color-surface-low: #F6F3F2;
+  --color-surface: #F0EDED;
+  --color-surface-high: #EAE7E7;
+
+  --color-success: #4CAF50;
+  --color-warning: #FFB86B;
+  --color-error: #FF6B6B;
+
+  --font-heading: "Space Grotesk", sans-serif;
+  --font-body: "Hanken Grotesk", sans-serif;
+
+  --shadow-brutal: 4px 4px 0px #2D1B69;
+  --shadow-brutal-lg: 8px 8px 0px #2D1B69;
+  
+  --radius-DEFAULT: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #FCF9F8;
+  --foreground: #1C1B1B;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* Global Brutalist Utility Classes */
+.brutal-border {
+  border: 2px solid #2D1B69;
+}
+
+.brutal-border-thick {
+  border: 3px solid #2D1B69;
+}
+
+.brutal-shadow {
+  box-shadow: 4px 4px 0px #2D1B69;
+}
+
+.brutal-shadow-lg {
+  box-shadow: 8px 8px 0px #2D1B69;
+}
+
+.brutal-hover {
+  transition: all 0.15s ease;
+}
+
+.brutal-hover:hover {
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px #2D1B69;
+}
+
+.brutal-btn-primary {
+  background: #9D7BFF;
+  color: white;
+  border: 3px solid #2D1B69;
+  box-shadow: 4px 4px 0px #2D1B69;
+  font-weight: 700;
+  padding: 14px 24px;
+  border-radius: 6px;
+  font-family: var(--font-heading);
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.brutal-btn-primary:hover {
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px #2D1B69;
+}
+
+.brutal-card {
+  background: #FCF9F8;
+  border: 2px solid #2D1B69;
+  box-shadow: 4px 4px 0px #2D1B69;
+  padding: 24px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.brutal-card-hover:hover {
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px #2D1B69;
+}
+
+.brutal-input {
+  background: white;
+  border: 2px solid #2D1B69;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 6px;
+  font-family: var(--font-body);
+  transition: all 0.15s ease;
+}
+
+.brutal-input:focus {
+  background: #E6E1FF;
+  outline: none;
 }
