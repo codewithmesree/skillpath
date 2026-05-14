@@ -26,7 +26,7 @@ export async function POST(req: Request) {
       if (order.notes && order.notes.planName) {
         // Handle Plan Upgrade
         await User.findByIdAndUpdate(order.notes.userId, { 
-          plan: order.notes.planName.toLowerCase() 
+          plan: String(order.notes.planName).toLowerCase() 
         });
         return NextResponse.json({ message: "Plan upgraded successfully" });
       }
