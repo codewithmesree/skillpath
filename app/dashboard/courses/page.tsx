@@ -36,9 +36,11 @@ export default function MyCourses() {
     fetchEnrollments();
   }, []);
 
-  const sortedEnrollments = [...enrollments].sort((a, b) => 
-    new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-  );
+  const sortedEnrollments = [...enrollments]
+    .filter(e => e.courseId)
+    .sort((a, b) => 
+      new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    );
 
   if (loading) return <div className="min-h-screen bg-bg-offwhite flex items-center justify-center font-heading font-bold uppercase opacity-20 text-4xl">Loading Your Library...</div>
 

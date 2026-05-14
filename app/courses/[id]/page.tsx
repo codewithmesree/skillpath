@@ -39,7 +39,7 @@ export default function CourseDetails() {
           const enrollments = await enrollRes.json();
           if (Array.isArray(enrollments)) {
             const enrolled = enrollments.some((e: any) => 
-              (e.courseId._id || e.courseId) === params.id
+              e.courseId && (e.courseId._id || e.courseId) === id
             );
             setIsEnrolled(enrolled);
           }

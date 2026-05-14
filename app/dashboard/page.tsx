@@ -59,9 +59,11 @@ export default function StudentDashboard() {
   }, []);
 
 
-  const sortedEnrollments = [...enrollments].sort((a, b) => 
-    new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-  );
+  const sortedEnrollments = [...enrollments]
+    .filter(e => e.courseId)
+    .sort((a, b) => 
+      new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    );
 
   const calculateQuizAvg = () => {
     let totalScore = 0;
