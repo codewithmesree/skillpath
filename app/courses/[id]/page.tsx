@@ -175,7 +175,7 @@ export default function CourseDetails() {
             
             <div className="w-full md:w-[400px]">
                <Card className="border-3 p-8 space-y-6 bg-white shadow-brutal-lg">
-                  <div className="text-4xl font-heading font-bold text-deep-indigo">${course.price}</div>
+                  <div className="text-4xl font-heading font-bold text-deep-indigo">₹{course.price}</div>
                   <div className="space-y-4">
                     <Button 
                 variant="primary" 
