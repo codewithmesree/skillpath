@@ -6,7 +6,15 @@ import { signToken } from '@/lib/auth';
 
 export async function POST(req: Request) {
   try {
-    await connectDB();
+    try {
+      await connectDB();
+    } catch (dbErr: any) {
+      console.error("Login DB connection error:", dbErr);
+      return NextResponse.json({ 
+        error: "Database unreachable. Please ensure your current IP (49.206.9.86) or '0.0.0.0/0' is added to your MongoDB Atlas IP Access List (Network Access)." 
+      }, { status: 503 });
+    }
+
     const { email, password } = await req.json();
 
     const user = await User.findOne({ email });
@@ -37,6 +45,11 @@ export async function POST(req: Request) {
 
     return response;
   } catch (error: any) {
+    if (error.name === 'MongooseServerSelectionError' || error.message?.includes('SSL alert') || error.message?.includes('whitelist')) {
+      return NextResponse.json({ 
+        error: "Database connection rejected: Your current IP (49.206.9.86) is not whitelisted in MongoDB Atlas. Please go to MongoDB Atlas -> Network Access and add 49.206.9.86 or '0.0.0.0/0'." 
+      }, { status: 503 });
+    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

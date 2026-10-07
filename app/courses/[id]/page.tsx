@@ -6,6 +6,7 @@ import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { useParams, useRouter } from 'next/navigation';
 import Script from 'next/script';
+import { Star, Check } from 'lucide-react';
 
 export default function CourseDetails() {
   const [course, setCourse] = useState<any>(null);
@@ -150,7 +151,7 @@ export default function CourseDetails() {
   return (
     <div className="min-h-screen bg-bg-offwhite flex flex-col">
       <Navbar />
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
       
       <main className="flex-grow">
         {/* Course Hero */}
@@ -167,7 +168,7 @@ export default function CourseDetails() {
                    <span className="font-bold text-white">{course.instructor}</span>
                  </div>
                  <div className="flex items-center gap-1 text-white">
-                   <span className="text-warning">★</span>
+                   <Star size={16} fill="currentColor" className="text-warning" />
                    <span className="font-bold">{course.rating} (Live Data)</span>
                  </div>
                </div>
@@ -203,7 +204,7 @@ export default function CourseDetails() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {["Core principles", "Mastering tools", "Custom components", "Clashing colors", "Impact & Readability"].map((item, i) => (
                   <div key={i} className="flex gap-3 items-start">
-                    <span className="text-primary font-bold">✓</span>
+                    <Check size={16} className="text-primary mt-0.5 shrink-0" strokeWidth={3} />
                     <span className="text-dark-text">{item}</span>
                   </div>
                 ))}

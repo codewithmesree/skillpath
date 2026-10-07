@@ -7,6 +7,7 @@ import { Card } from "@/components/Card";
 import { CourseCard } from "@/components/CourseCard";
 import { Button } from "@/components/Button";
 import { useRouter } from 'next/navigation';
+import { BookOpen, Zap, Trophy, FileText } from 'lucide-react';
 
 export default function StudentDashboard() {
   const [user, setUser] = useState<any>(null);
@@ -95,7 +96,7 @@ export default function StudentDashboard() {
         
         <main className="flex-1 p-6 md:p-10 max-w-6xl mx-auto w-full">
           <header className="mb-10">
-            <h1 className="text-4xl font-heading font-bold text-deep-indigo uppercase tracking-tighter">Welcome back, {user?.name || 'Learner'}! 👋</h1>
+            <h1 className="text-4xl font-heading font-bold text-deep-indigo uppercase tracking-tighter">Welcome back, {user?.name || 'Learner'}!</h1>
             <p className="text-lg opacity-70">You're making great progress this week. Keep it up!</p>
           </header>
 
@@ -131,7 +132,7 @@ export default function StudentDashboard() {
                    />
                  )) : (
                    <div className="col-span-full py-20 border-4 border-dashed border-deep-indigo/10 rounded-xl text-center">
-                     <div className="text-6xl mb-4 opacity-20">📚</div>
+                     <BookOpen size={56} className="mx-auto mb-4 opacity-20 text-deep-indigo" />
                      <p className="font-heading font-bold text-deep-indigo opacity-30 uppercase tracking-widest text-xl">No courses enrolled yet.</p>
                      <Button variant="primary" className="mt-6" onClick={() => window.location.href = '/courses'}>Explore Courses</Button>
                    </div>
@@ -144,20 +145,23 @@ export default function StudentDashboard() {
                <h2 className="text-2xl font-heading font-bold text-deep-indigo uppercase">Achievements</h2>
                <Card className="bg-secondary/20 border-3 border-deep-indigo space-y-6 p-6">
                   {[
-                    { icon: '🎯', title: 'Quick Learner', desc: 'Completed 5 lessons in 1 day' },
-                    { icon: '📄', title: 'Top Scorer', desc: 'Got 100% in React Quiz' },
-                    { icon: '🏆', title: 'Weekly Warrior', desc: '7 day learning streak' }
-                  ].map((activity, i) => (
-                    <div key={i} className="flex gap-4 items-center group">
-                      <div className="w-12 h-12 bg-white border-2 border-deep-indigo shadow-brutal flex items-center justify-center text-2xl group-hover:-rotate-12 transition-transform">
-                        {activity.icon}
+                    { icon: Zap, title: 'Quick Learner', desc: 'Completed 5 lessons in 1 day' },
+                    { icon: FileText, title: 'Top Scorer', desc: 'Got 100% in React Quiz' },
+                    { icon: Trophy, title: 'Weekly Warrior', desc: '7 day learning streak' }
+                  ].map((activity, i) => {
+                    const IconComp = activity.icon;
+                    return (
+                      <div key={i} className="flex gap-4 items-center group">
+                        <div className="w-12 h-12 bg-white border-2 border-deep-indigo shadow-brutal flex items-center justify-center group-hover:-rotate-12 transition-transform text-deep-indigo">
+                          <IconComp size={22} />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-black text-deep-indigo uppercase leading-tight">{activity.title}</p>
+                          <p className="text-[11px] font-bold opacity-60 uppercase tracking-tighter">{activity.desc}</p>
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-black text-deep-indigo uppercase leading-tight">{activity.title}</p>
-                        <p className="text-[11px] font-bold opacity-60 uppercase tracking-tighter">{activity.desc}</p>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                   <Button variant="outline" className="w-full py-2 text-[10px] font-bold uppercase tracking-widest mt-4">View Certificates</Button>
                </Card>
             </div>

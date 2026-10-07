@@ -59,9 +59,24 @@ SkillPath is a cutting-edge Learning Management System (LMS) built with a **Lave
 5. **Open the app**:
    Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 🧪 Testing Accounts
+## 🧪 Testing Accounts & Payments
 
-- **Admin**: Create a user via `/register` and manually set `role: "admin"` in the database.
-- **Instructor**: Choose "Instructor" during registration.
-- **Student**: Default account type during registration.
+- **Dedicated Admin Portal**: Navigate directly to `/admin/login`.
+  - **Inbuilt Email**: `admin@skillpath.dev` (or configured via `ADMIN_EMAIL` in `.env.local`)
+  - **Inbuilt Password**: `admin123` (or configured via `ADMIN_PASSWORD` in `.env.local`)
+  - *Note: Admin authentication is completely separated from the public login/signup flow.*
+- **Instructor**: Choose "Instructor" during public registration (`/register`).
+- **Student**: Default account type during public registration (`/register`).
+
+### 💳 Razorpay Test Payment Credentials
+
+- **Test Card**:
+  - **Card Number**: `4100 2800 0000 1007`
+  - **CVV**: `123`
+  - **Expiry**: `12/26`
+  - **OTP**: Any numeric value or click **Success** on the Razorpay test screen.
+- **Test UPI**:
+  - **VPA / UPI ID**: `test@razorpay`
+  - Click **Success** on the Razorpay test screen.
+
 

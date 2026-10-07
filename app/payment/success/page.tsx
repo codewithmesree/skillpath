@@ -2,6 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { Card } from "@/components/Card";
 import { Button } from "@/components/Button";
 import Link from "next/link";
+import { Check } from "lucide-react";
 
 export default function PaymentSuccessPage() {
   return (
@@ -10,7 +11,7 @@ export default function PaymentSuccessPage() {
       <main className="flex-grow flex items-center justify-center p-6">
         <Card className="max-w-md w-full text-center border-3 p-12">
           <div className="w-20 h-20 bg-success border-3 border-deep-indigo rounded-full flex items-center justify-center mx-auto mb-6 shadow-brutal">
-             <span className="text-4xl">✓</span>
+             <Check size={36} className="text-white" strokeWidth={3} />
           </div>
           <h1 className="text-3xl font-heading font-bold text-deep-indigo uppercase mb-2">Payment Successful!</h1>
           <p className="text-lg opacity-60 mb-8">Welcome to the course. Your learning journey begins now.</p>

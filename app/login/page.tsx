@@ -31,12 +31,11 @@ export default function LoginPage() {
 
       if (!res.ok) throw new Error(data.error);
 
-      router.push(
+      const targetUrl = 
         data.user.role === 'admin' ? '/admin' : 
         data.user.role === 'instructor' ? '/instructor' : 
-        '/dashboard'
-      );
-      router.refresh();
+        '/dashboard';
+      router.push(targetUrl);
 
     } catch (err: any) {
       setError(err.message);

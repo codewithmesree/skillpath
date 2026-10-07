@@ -9,7 +9,9 @@ import { Input } from "@/components/Input";
 export default function CourseListing() {
   const [courses, setCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const categories = ["All", "Design", "Development", "Business", "Marketing", "Music", "Photography"];
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
+  const baseCategories = ["All", "Art", "Design", "Development", "Business", "Marketing", "Music", "Photography", "AI & Tech"];
   
   useEffect(() => {
     const fetchCourses = async () => {
@@ -29,6 +31,28 @@ export default function CourseListing() {
     fetchCourses();
   }, []);
 
+  const categories = React.useMemo(() => {
+    const set = new Set<string>(baseCategories);
+    courses.forEach((c) => {
+      if (c.category && typeof c.category === 'string') {
+        const trimmed = c.category.trim();
+        if (trimmed) set.add(trimmed);
+      }
+    });
+    return Array.from(set);
+  }, [courses]);
+
+  const filteredCourses = courses.filter((c) => {
+    const matchesCategory =
+      selectedCategory === "All" ||
+      (c.category && c.category.toLowerCase() === selectedCategory.toLowerCase());
+    const matchesSearch =
+      !searchQuery ||
+      c.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.instructor?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.category?.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <div className="min-h-screen bg-bg-offwhite flex flex-col">
@@ -42,8 +66,21 @@ export default function CourseListing() {
           </div>
           
           <div className="flex flex-col sm:flex-row gap-4 flex-1 max-w-xl">
-             <Input placeholder="Search for courses, skills, or mentors..." className="flex-1" />
-             <Button variant="primary" className="h-fit py-[14px]">Filter</Button>
+             <Input 
+               placeholder="Search for courses, skills, or mentors..." 
+               className="flex-1"
+               value={searchQuery}
+               onChange={(e) => setSearchQuery(e.target.value)}
+             />
+             {(searchQuery || selectedCategory !== "All") && (
+               <Button 
+                 variant="secondary" 
+                 className="h-fit py-[14px]"
+                 onClick={() => { setSelectedCategory("All"); setSearchQuery(""); }}
+               >
+                 Clear
+               </Button>
+             )}
           </div>
         </div>
 
@@ -52,8 +89,9 @@ export default function CourseListing() {
           {categories.map((cat) => (
             <button 
               key={cat}
+              onClick={() => setSelectedCategory(cat)}
               className={`px-6 py-2 rounded-lg border-2 border-deep-indigo font-heading font-bold transition-all duration-150 ${
-                cat === "All" 
+                selectedCategory === cat 
                 ? "bg-primary text-white shadow-brutal translate-x-[2px] translate-y-[2px]" 
                 : "bg-secondary/40 text-deep-indigo hover:bg-secondary"
               }`}
@@ -68,10 +106,12 @@ export default function CourseListing() {
           <div className="text-center font-heading font-bold text-2xl py-20 uppercase opacity-20">Loading Courses...</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {courses.length > 0 ? courses.map((course, i) => (
+            {filteredCourses.length > 0 ? filteredCourses.map((course, i) => (
               <CourseCard key={course._id || i} courseId={course._id} {...course} />
             )) : (
-              <div className="col-span-full text-center py-20 font-bold opacity-50">No courses found. Check back later!</div>
+              <div className="col-span-full text-center py-20 font-bold opacity-50">
+                {courses.length === 0 ? "No courses published yet. Check back later!" : "No courses found matching this category or filter."}
+              </div>
             )}
           </div>
         )}

@@ -5,7 +5,7 @@ import { Navbar } from "@/components/Navbar";
 import { AdminSidebar } from "@/components/AdminSidebar";
 import { Card } from "@/components/Card";
 import { Button } from "@/components/Button";
-import { Search, Filter, MoreVertical, Edit2, Trash2 } from 'lucide-react';
+import { Search, Filter, MoreVertical, Edit2, Trash2, Inbox } from 'lucide-react';
 
 export default function AdminCourses() {
   const [courses, setCourses] = useState<any[]>([]);
@@ -82,6 +82,13 @@ export default function AdminCourses() {
                   <div className="absolute top-4 right-4 bg-white border-2 border-deep-indigo px-3 py-1 font-bold text-xs uppercase shadow-brutal">
                     {course.category}
                   </div>
+                  <div className={`absolute top-4 left-4 border-2 px-3 py-1 font-black text-[10px] uppercase italic ${
+                    course.status === 'approved' ? 'bg-success/90 border-deep-indigo text-deep-indigo'
+                    : course.status === 'pending' ? 'bg-warning border-deep-indigo text-deep-indigo'
+                    : 'bg-error border-deep-indigo text-white'
+                  }`}>
+                    {course.status}
+                  </div>
                 </div>
                 
                 <div className="p-6 flex-1 flex flex-col">
@@ -106,7 +113,7 @@ export default function AdminCourses() {
               </Card>
             )) : (
               <div className="col-span-full py-20 text-center border-4 border-dashed border-deep-indigo/20 rounded-xl">
-                 <div className="text-6xl mb-4 opacity-20">📭</div>
+                 <Inbox size={52} className="mx-auto mb-4 opacity-30 text-deep-indigo" />
                  <h2 className="text-2xl font-heading font-bold text-deep-indigo opacity-30 uppercase tracking-widest">No courses found</h2>
               </div>
             )}

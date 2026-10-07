@@ -87,27 +87,28 @@ export default function RegisterPage() {
             
             <div className="space-y-2">
               <label className="font-heading font-bold text-sm text-deep-indigo uppercase tracking-wider">Account Type</label>
-              <div className="flex gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <button 
                   type="button"
                   onClick={() => setRole('student')}
-                  className={`flex-1 py-3 border-2 font-bold rounded-md transition-all ${role === 'student' ? 'bg-primary text-white border-deep-indigo shadow-brutal' : 'bg-white text-deep-indigo border-transparent hover:border-deep-indigo'}`}
+                  className={`py-3.5 border-3 font-heading font-bold text-sm uppercase rounded-md transition-all ${
+                    role === 'student' 
+                      ? 'bg-primary text-white border-deep-indigo shadow-brutal translate-x-0.5 translate-y-0.5' 
+                      : 'bg-white text-deep-indigo border-deep-indigo/40 hover:border-deep-indigo'
+                  }`}
                 >
                   Student
                 </button>
                 <button 
                   type="button"
                   onClick={() => setRole('instructor')}
-                  className={`flex-1 py-3 border-2 font-bold rounded-md transition-all ${role === 'instructor' ? 'bg-primary text-white border-deep-indigo shadow-brutal' : 'bg-white text-deep-indigo border-transparent hover:border-deep-indigo'}`}
+                  className={`py-3.5 border-3 font-heading font-bold text-sm uppercase rounded-md transition-all ${
+                    role === 'instructor' 
+                      ? 'bg-primary text-white border-deep-indigo shadow-brutal translate-x-0.5 translate-y-0.5' 
+                      : 'bg-white text-deep-indigo border-deep-indigo/40 hover:border-deep-indigo'
+                  }`}
                 >
                   Instructor
-                </button>
-                <button 
-                  type="button"
-                  onClick={() => setRole('admin')}
-                  className={`flex-1 py-3 border-2 font-bold rounded-md transition-all ${role === 'admin' ? 'bg-primary text-white border-deep-indigo shadow-brutal' : 'bg-white text-deep-indigo border-transparent hover:border-deep-indigo'}`}
-                >
-                  Admin
                 </button>
               </div>
             </div>

@@ -1,5 +1,8 @@
+"use client";
+
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
   LayoutDashboard, 
   BookOpen, 
@@ -15,6 +18,19 @@ interface AdminSidebarProps {
 }
 
 export const AdminSidebar = ({ activeItem }: AdminSidebarProps) => {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      router.push('/admin/login');
+      router.refresh();
+    } catch (err) {
+      console.error('Logout error:', err);
+      router.push('/admin/login');
+    }
+  };
+
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/admin' },
     { name: 'Courses', icon: BookOpen, path: '/admin/courses' },
@@ -62,13 +78,16 @@ export const AdminSidebar = ({ activeItem }: AdminSidebarProps) => {
 
       {/* Footer / Logout */}
       <div className="mt-auto pt-6 border-t-2 border-deep-indigo/10">
-        <button className="w-full flex items-center justify-center gap-3 p-4 bg-white border-3 border-deep-indigo text-error font-heading font-bold uppercase hover:bg-error hover:text-white hover:shadow-brutal transition-all group">
+        <button 
+          onClick={handleLogout}
+          className="w-full flex items-center justify-center gap-3 p-4 bg-white border-3 border-deep-indigo text-error font-heading font-bold uppercase hover:bg-error hover:text-white hover:shadow-brutal transition-all group cursor-pointer"
+        >
           <LogOut size={20} className="group-hover:-translate-x-1 transition-transform" />
           <span>Logout</span>
         </button>
         
         <div className="mt-6 text-center">
-          <p className="text-[10px] font-bold text-deep-indigo uppercase opacity-30 tracking-[0.2em]">SkillPath v1.0.4</p>
+          <p className="text-[10px] font-bold text-deep-indigo uppercase opacity-30 tracking-[0.2em]">SkillPath Admin Console</p>
         </div>
       </div>
     </aside>

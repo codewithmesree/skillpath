@@ -5,6 +5,7 @@ import { Navbar } from "@/components/Navbar";
 import { Sidebar } from "@/components/Sidebar";
 import { CourseCard } from "@/components/CourseCard";
 import { Button } from "@/components/Button";
+import { BookOpen } from "lucide-react";
 
 export default function MyCourses() {
   const [enrollments, setEnrollments] = useState<any[]>([]);
@@ -74,7 +75,7 @@ export default function MyCourses() {
               />
             )) : (
               <div className="col-span-full py-24 border-4 border-dashed border-deep-indigo/10 rounded-xl text-center bg-white">
-                <div className="text-7xl mb-6 grayscale opacity-20">📖</div>
+                <BookOpen size={56} className="mx-auto mb-6 opacity-20 text-deep-indigo" />
                 <p className="font-heading font-bold text-deep-indigo opacity-30 uppercase tracking-widest text-xl">Your library is empty.</p>
                 <p className="text-sm opacity-40 mt-2 mb-8 uppercase font-bold">Start your first path today!</p>
                 <Button variant="primary" className="px-10" onClick={() => window.location.href = '/courses'}>Explore Paths</Button>

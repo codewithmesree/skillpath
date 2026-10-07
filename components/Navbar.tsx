@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from './Button';
 import { useRouter } from 'next/navigation';
-import { Sparkles, User, LogOut, Menu, X } from 'lucide-react';
+import { Sparkles, User, LogOut, Menu, X, LayoutDashboard, Home } from 'lucide-react';
 
 export const Navbar = () => {
   const [user, setUser] = useState<any>(null);
@@ -21,10 +21,20 @@ export const Navbar = () => {
   }, []);
 
   const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (e) {
+      console.error('Logout error:', e);
+    }
     setUser(null);
-    router.push('/');
-    router.refresh();
+    window.location.href = '/';
+  };
+
+  const handleHomeClick = async (e: React.MouseEvent) => {
+    if (user) {
+      e.preventDefault();
+      await handleLogout();
+    }
   };
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -40,28 +50,16 @@ export const Navbar = () => {
           {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
 
-        <Link href="/" className="flex items-center gap-3 group">
+        <Link 
+          href="/" 
+          onClick={handleHomeClick} 
+          className="flex items-center gap-3 group"
+          title={user ? "Home (Auto-Logout)" : "SkillPath Home"}
+        >
           <div className="w-10 h-10 bg-primary border-3 border-deep-indigo shadow-brutal flex items-center justify-center transition-transform group-hover:-rotate-6">
             <span className="text-white font-heading font-black text-xl italic">S</span>
           </div>
           <span className="font-heading font-black text-2xl tracking-tighter text-deep-indigo uppercase italic group-hover:text-primary transition-colors hidden xs:block">SkillPath</span>
-        </Link>
-      </div>
-
-      <div className="hidden lg:flex items-center gap-10 bg-secondary/30 px-8 py-2 border-2 border-deep-indigo/10 rounded-full">
-        <Link href="/courses" className="font-heading font-bold text-deep-indigo hover:text-primary transition-all text-xs uppercase tracking-widest">Courses</Link>
-        {user && (
-          <Link 
-            href={user.role === 'admin' ? '/admin' : user.role === 'instructor' ? '/instructor' : '/dashboard'} 
-            className="font-heading font-bold text-deep-indigo hover:text-primary transition-all text-xs uppercase tracking-widest"
-          >
-            Dashboard
-          </Link>
-        )}
-
-        <Link href="/pricing" className="font-heading font-bold text-deep-indigo hover:text-primary transition-all text-xs uppercase tracking-widest flex items-center gap-2">
-          <Sparkles size={14} />
-          Pricing
         </Link>
       </div>
 
@@ -95,6 +93,25 @@ export const Navbar = () => {
                   <p className="text-[10px] font-black uppercase opacity-40">Signed in as</p>
                   <p className="font-heading font-bold text-deep-indigo truncate">{user.email}</p>
                 </div>
+
+                <Link 
+                  href="/" 
+                  className="flex items-center gap-3 w-full p-3 font-heading font-bold text-xs text-deep-indigo uppercase hover:bg-secondary transition-colors" 
+                  onClick={async (e) => {
+                    setIsDropdownOpen(false);
+                    await handleHomeClick(e);
+                  }}
+                >
+                  <Home size={16} /> Home (Logout)
+                </Link>
+
+                <Link 
+                  href={user.role === 'admin' ? '/admin' : user.role === 'instructor' ? '/instructor' : '/dashboard'} 
+                  className="flex items-center gap-3 w-full p-3 font-heading font-bold text-xs text-deep-indigo uppercase hover:bg-secondary transition-colors" 
+                  onClick={() => setIsDropdownOpen(false)}
+                >
+                  <LayoutDashboard size={16} /> {user.role === 'admin' ? 'Admin Portal' : user.role === 'instructor' ? 'Instructor Studio' : 'Dashboard'}
+                </Link>
                 
                 <Link href={user.role === 'admin' ? '/admin/settings' : '/dashboard/settings'} className="flex items-center gap-3 w-full p-3 font-heading font-bold text-xs text-deep-indigo uppercase hover:bg-secondary transition-colors" onClick={() => setIsDropdownOpen(false)}>
                   <User size={16} /> My Profile
@@ -127,29 +144,28 @@ export const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="fixed inset-0 top-[72px] bg-white z-40 lg:hidden flex flex-col p-8 space-y-6 animate-in slide-in-from-left duration-300">
            <Link 
-            href="/courses" 
-            className="text-2xl font-heading font-black text-deep-indigo uppercase border-b-4 border-deep-indigo/5 pb-4"
-            onClick={() => setIsMobileMenuOpen(false)}
+             href="/" 
+             className="text-2xl font-heading font-black text-deep-indigo uppercase border-b-4 border-deep-indigo/5 pb-4 flex items-center justify-between"
+             onClick={async (e) => {
+               setIsMobileMenuOpen(false);
+               await handleHomeClick(e);
+             }}
            >
-            Courses
+             <div className="flex items-center gap-3">
+               <Home size={24} /> Home
+             </div>
+             {user && <span className="text-[10px] bg-error/10 text-error px-2 py-0.5 border border-error font-mono">Auto-Logout</span>}
            </Link>
            {user && (
              <Link 
-              href={user.role === 'admin' ? '/admin' : '/dashboard'} 
-              className="text-2xl font-heading font-black text-deep-indigo uppercase border-b-4 border-deep-indigo/5 pb-4"
+              href={user.role === 'admin' ? '/admin' : user.role === 'instructor' ? '/instructor' : '/dashboard'} 
+              className="text-2xl font-heading font-black text-deep-indigo uppercase border-b-4 border-deep-indigo/5 pb-4 flex items-center gap-3"
               onClick={() => setIsMobileMenuOpen(false)}
              >
-              Dashboard
+              <LayoutDashboard size={24} /> {user.role === 'admin' ? 'Admin Portal' : user.role === 'instructor' ? 'Instructor Studio' : 'Dashboard'}
              </Link>
            )}
-           <Link 
-            href="/pricing" 
-            className="text-2xl font-heading font-black text-deep-indigo uppercase border-b-4 border-deep-indigo/5 pb-4"
-            onClick={() => setIsMobileMenuOpen(false)}
-           >
-            Pricing
-           </Link>
-           <div className="pt-10">
+           <div className="pt-6">
              {user ? (
                <Button variant="primary" className="w-full py-4 text-lg" onClick={handleLogout}>Log Out</Button>
              ) : (
