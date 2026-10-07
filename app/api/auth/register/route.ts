@@ -10,9 +10,11 @@ export async function POST(req: Request) {
       await connectDB();
     } catch (dbErr: any) {
       console.error("Register DB connection error:", dbErr);
-      return NextResponse.json({ 
-        error: "Database unreachable. Please ensure your current IP (49.206.9.86) or '0.0.0.0/0' is added to your MongoDB Atlas IP Access List (Network Access)." 
-      }, { status: 503 });
+      const isMissingUri = !process.env.MONGODB_URI;
+      const message = isMissingUri
+        ? "MONGODB_URI is not set in your production hosting environment. Please add MONGODB_URI in your Vercel/hosting dashboard."
+        : `Database unreachable: ${dbErr?.message || 'Connection failed'}. In production, ensure '0.0.0.0/0' is added to MongoDB Atlas Network Access (IP Access List).`;
+      return NextResponse.json({ error: message }, { status: 503 });
     }
 
     const { name, email, password, role } = await req.json();

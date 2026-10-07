@@ -4,20 +4,17 @@ import '@/models/User';
 import '@/models/Course';
 
 function ensureDns() {
-  try {
-    dns.setServers(['8.8.8.8', '1.1.1.1']);
-  } catch {
-    // Ignore in environments where setServers isn't supported
+  // Only override DNS on local Windows if needed
+  if (process.platform === 'win32') {
+    try {
+      dns.setServers(['8.8.8.8', '1.1.1.1']);
+    } catch {
+      // Ignore in environments where setServers isn't supported
+    }
   }
 }
 
 ensureDns();
-
-const MONGODB_URI = process.env.MONGODB_URI;
-
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
-}
 
 let cached = (global as any).mongoose;
 
@@ -26,6 +23,11 @@ if (!cached) {
 }
 
 async function connectDB() {
+  const uri = process.env.MONGODB_URI;
+  if (!uri) {
+    throw new Error('MONGODB_URI is not defined. Please add MONGODB_URI to your environment variables (e.g. Vercel Project Settings -> Environment Variables).');
+  }
+
   ensureDns();
 
   if (cached.conn) {
@@ -36,10 +38,10 @@ async function connectDB() {
     const opts = {
       bufferCommands: false,
       dbName: 'skillpath',
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 10000,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
+    cached.promise = mongoose.connect(uri, opts).then((mongoose) => {
       return mongoose;
     });
   }

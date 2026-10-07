@@ -10,9 +10,11 @@ export async function POST(req: Request) {
       await connectDB();
     } catch (dbErr: any) {
       console.error("Login DB connection error:", dbErr);
-      return NextResponse.json({ 
-        error: "Database unreachable. Please ensure your current IP (49.206.9.86) or '0.0.0.0/0' is added to your MongoDB Atlas IP Access List (Network Access)." 
-      }, { status: 503 });
+      const isMissingUri = !process.env.MONGODB_URI;
+      const message = isMissingUri
+        ? "MONGODB_URI is not set in your production hosting environment. Please add MONGODB_URI in your Vercel/hosting dashboard."
+        : `Database unreachable: ${dbErr?.message || 'Connection failed'}. In production, ensure '0.0.0.0/0' is added to MongoDB Atlas Network Access (IP Access List).`;
+      return NextResponse.json({ error: message }, { status: 503 });
     }
 
     const { email, password } = await req.json();
@@ -47,9 +49,9 @@ export async function POST(req: Request) {
   } catch (error: any) {
     if (error.name === 'MongooseServerSelectionError' || error.message?.includes('SSL alert') || error.message?.includes('whitelist')) {
       return NextResponse.json({ 
-        error: "Database connection rejected: Your current IP (49.206.9.86) is not whitelisted in MongoDB Atlas. Please go to MongoDB Atlas -> Network Access and add 49.206.9.86 or '0.0.0.0/0'." 
+        error: `Database connection rejected: In production, ensure '0.0.0.0/0' is added to MongoDB Atlas Network Access. (${error.message})` 
       }, { status: 503 });
     }
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'An error occurred during login' }, { status: 500 });
   }
 }
